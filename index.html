@@ -1,112 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senior 1 Algebra - Unit 1 | Mr. Saif Eldeen Sameh</title>
-    <!-- MathJax for rendering equations -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#03584a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- MathJax for Mathematical Equations -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --success: #16a34a;
-            --error: #dc2626;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 30px;
-            margin: 20px;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-        }
-        .header h1 {
-            color: var(--primary);
-            margin: 0 0 8px 0;
-            font-size: 1.8rem;
-        }
-        .header p {
-            color: var(--text-muted);
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        /* باقي تنسيق الشيت والأسئلة */
-        .question-box {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        .options-list {
-            list-style: none;
-            padding: 0;
-        }
-        .option-item {
-            background: #f1f5f9;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
-        }
-        .option-item:hover {
-            background: #e2e8f0;
-            border-color: var(--primary);
-        }
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        .btn:hover {
-            background: var(--primary-dark);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col items-center py-6 px-4 transition-colors duration-300">
 
-    <div class="container">
-        <div class="header">
-            <h1>Senior 1 - Algebra (Unit 1)</h1>
-            <p>Interactive Practice Sheet | Prepared by: Mr. Saif Eldeen Sameh</p>
-        </div>
-
-        <div id="quiz-app">
-            <div class="question-box">
-                Loading interactive questions...
+    <div class="w-full max-w-3xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 transition-all">
+        
+        <!-- Header with Teacher's Name -->
+        <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-5 mb-6 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-3 rounded-xl shadow-md font-bold text-lg">
+                    <span>$\sqrt{x}$</span>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Senior 1 Algebra Sheet</h1>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-0.5">Prepared by: Mr. Saif Eldeen Sameh</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Unit 1: Quadratic Equations & Complex Numbers (30 MCQs)</p>
+                </div>
             </div>
-        </div>
-    </div>
-
-</body>
-</html>
+            
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-50 dark:bg-slate-700 px-4 py-2 rounded-xl text-center border border-blue-100 dark:border-slate-600">
+                    <span class="text-xs text-slate-500 dark:text-slate-400 block">Score</span>
+                    <span id="score-display" class="font-bold text-blue-600 dark:text-blue-400 text-lg">0 / 30</span>
+                </div>
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+                    <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m3
