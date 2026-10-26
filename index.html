@@ -41,7 +41,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col items-center py-4 sm:py-8 px-3 sm:px-6 transition-colors duration-300">
 
-    <!-- Main Container with Responsive Padding -->
+    <!-- Main Container -->
     <div class="w-full max-w-3xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-5 sm:p-8 transition-all">
         
         <!-- Header with Teacher's Name -->
@@ -58,7 +58,7 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <div class="bg-blue-50 dark:bg-slate-700 px-4 py-2 rounded-xl text-center border border-blue-100 dark:border-slate-600">
+                <div id="score-container" class="hidden bg-blue-50 dark:bg-slate-700 px-4 py-2 rounded-xl text-center border border-blue-100 dark:border-slate-600">
                     <span class="text-xs text-slate-500 dark:text-slate-400 block">Score</span>
                     <span id="score-display" class="font-bold text-blue-600 dark:text-blue-400 text-lg">0 / 30</span>
                 </div>
@@ -69,19 +69,41 @@
             </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="mb-6">
-            <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
-                <span>OVERALL PROGRESS</span>
-                <span id="progress-text">0 of 30 Answered</span>
-            </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                <div id="progress-bar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+        <!-- Student Name Welcome Modal / Screen -->
+        <div id="welcome-screen" class="py-6 text-center">
+            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">📝</div>
+            <h2 class="text-2xl font-bold mb-2">Welcome to Algebra Practice!</h2>
+            <p class="text-slate-500 dark:text-slate-400 mb-6 text-sm">Please enter your full name to start the sheet.</p>
+            
+            <div class="max-w-md mx-auto space-y-4">
+                <input type="text" id="student-name-input" placeholder="Enter Student Full Name..." class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-center font-semibold">
+                <p id="name-error" class="text-xs text-red-500 hidden">Please enter your name before starting.</p>
+                <button onclick="startQuiz()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/20 transition-all">
+                    Start Sheet →
+                </button>
             </div>
         </div>
 
-        <!-- Question Container -->
-        <div id="quiz-container">
+        <!-- Quiz Container (Hidden initially) -->
+        <div id="quiz-container" class="hidden">
+            <!-- Student Banner -->
+            <div class="flex justify-between items-center bg-blue-50 dark:bg-slate-700/50 px-4 py-2.5 rounded-xl mb-4 border border-blue-100 dark:border-slate-600">
+                <span class="text-xs text-slate-500 dark:text-slate-400">Student:</span>
+                <span id="student-name-display" class="font-bold text-sm text-blue-700 dark:text-blue-300"></span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
+                    <span>OVERALL PROGRESS</span>
+                    <span id="progress-text">0 of 30 Answered</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-blue-600 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
             <div id="question-card" class="mb-6">
                 <div class="flex justify-between items-center mb-3">
                     <span id="question-badge" class="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold">Lesson 1</span>
@@ -118,8 +140,9 @@
         <!-- Summary Screen (Hidden by default) -->
         <div id="summary-screen" class="hidden text-center py-8">
             <div class="w-20 h-20 bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">🎉</div>
-            <h2 class="text-2xl font-bold mb-2">Practice Sheet Completed!</h2>
-            <p class="text-slate-500 dark:text-slate-400 mb-6">Great job working through Unit 1 Algebra.</p>
+            <h2 class="text-2xl font-bold mb-1">Practice Sheet Completed!</h2>
+            <p id="summary-student-name" class="text-blue-600 dark:text-blue-400 font-bold mb-4 text-lg"></p>
+            
             <div class="bg-slate-50 dark:bg-slate-700/50 p-6 rounded-2xl max-w-sm mx-auto mb-6 border border-slate-100 dark:border-slate-700">
                 <span class="text-sm text-slate-500 dark:text-slate-400 block mb-1">Final Score</span>
                 <span id="final-score" class="text-4xl font-extrabold text-blue-600 dark:text-blue-400">0 / 30</span>
@@ -134,21 +157,22 @@
 
     <script>
         const questions = [
+            // Lesson 1: Complex Numbers (Q1 - Q8)
             {
                 lesson: "Lesson 1: Complex Numbers",
                 q: "If $i$ is the imaginary unit where $i^2 = -1$, what is the simplest form of $i^{27}$?",
                 options: ["$1$", "$-1$", "$i$", "$-i$"],
-                answer: 2,
-                hint: "Divide the exponent 27 by 4 and look at the remainder.",
-                solution: "$i^{27} = i^{26} \\times i = (i^4)^6 \\times i = (1)^6 \\times i = i$."
+                answer: 3, // Corrected to -i
+                hint: "Divide exponent 27 by 4: remainder is 3, so $i^{27} = i^3 = -i$.",
+                solution: "$i^{27} = (i^4)^6 \\times i^3 = 1 \\times (-i) = -i$."
             },
             {
                 lesson: "Lesson 1: Complex Numbers",
                 q: "What is the value of $i^{42} + i^{40}$?",
                 options: ["$0$", "$2$", "$-2$", "$2i$"],
-                answer: 2,
-                hint: "Simplify powers of $i$ using multiples of 4.",
-                solution: "$i^{40} = 1$, and $i^{42} = -1$. Thus, $-1 + 1 = 0$."
+                answer: 0, // Corrected to 0
+                hint: "Simplify $i^{42} = -1$ and $i^{40} = 1$.",
+                solution: "$i^{42} + i^{40} = -1 + 1 = 0$."
             },
             {
                 lesson: "Lesson 1: Complex Numbers",
@@ -198,6 +222,8 @@
                 hint: "Multiply top and bottom by the conjugate $3 - 4i$.",
                 solution: "$\\frac{3 - 4i}{3^2 + 4^2} = \\frac{3 - 4i}{25} = \\frac{3}{25} - \\frac{4}{25}i$."
             },
+
+            // Lesson 2: Types of Roots & Discriminant (Q9 - Q16)
             {
                 lesson: "Lesson 2: Discriminant & Roots",
                 q: "What is the discriminant of the quadratic equation $2x^2 - 5x + 2 = 0$?",
@@ -262,6 +288,8 @@
                 hint: "The discriminant must be a positive perfect square.",
                 solution: "For $x^2 - 5x + 6 = 0$, $\\Delta = 25 - 24 = 1$ (positive perfect square)."
             },
+
+            // Lesson 3: Root-Coefficient Relations (Q17 - Q23)
             {
                 lesson: "Lesson 3: Root-Coefficient Relations",
                 q: "If $L$ and $M$ are the roots of $2x^2 - 8x + 5 = 0$, what is the sum $L + M$?",
@@ -318,6 +346,8 @@
                 hint: "Use identity $(L-M)^2 = (L+M)^2 - 4LM$.",
                 solution: "$6^2 - 4(8) = 36 - 32 = 4$."
             },
+
+            // Lesson 4: Forming Quadratic Equations (Q24 - Q30)
             {
                 lesson: "Lesson 4: Forming Equations",
                 q: "Form the quadratic equation whose roots are $2$ and $3$.",
@@ -328,11 +358,11 @@
             },
             {
                 lesson: "Lesson 4: Forming Equations",
-                q: "Find the quadratic equation whose roots are $-2$ and $5$.",
-                options: ["$x^2 - 3x - 10 = 0$", "$x^2 + 3x - 10 = 0$", "$x^2 - 3x + 10 = 0$", "$x^2 + 3x + 10 = 0$"],
-                answer: 0,
-                hint: "Sum $= 3$, Product $= -10$.",
-                solution: "$x^2 - (3)x + (-10) = 0 \\implies x^2 - 3x - 10 = 0$."
+                q: "If $L$ and $M$ are the roots of $x^2 - 3x - 5 = 0$, form the quadratic equation whose roots are $L + 1$ and $M + 1$.",
+                options: ["$x^2 - 5x - 1 = 0$", "$x^2 + 5x - 1 = 0$", "$x^2 - 5x + 1 = 0$", "$x^2 - 3x - 5 = 0$"],
+                answer: 0, // Replaced Q25 with higher-level question
+                hint: "New sum $= (L+1)+(M+1) = (L+M)+2 = 3+2 = 5$. New product $= (L+1)(M+1) = LM + (L+M) + 1 = -5 + 3 + 1 = -1$.",
+                solution: "New sum $= 5$, New product $= -1$. Equation: $x^2 - 5x - 1 = 0$."
             },
             {
                 lesson: "Lesson 4: Forming Equations",
@@ -380,6 +410,21 @@
         let score = 0;
         let userAnswers = new Array(questions.length).fill(null);
         let answered = new Array(questions.length).fill(false);
+        let studentName = "";
+
+        function startQuiz() {
+            const input = document.getElementById('student-name-input').value.trim();
+            if (!input) {
+                document.getElementById('name-error').classList.remove('hidden');
+                return;
+            }
+            studentName = input;
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('score-container').classList.remove('hidden');
+            document.getElementById('student-name-display').innerText = studentName;
+            loadQuestion();
+        }
 
         function loadQuestion() {
             const q = questions[currentQuestion];
@@ -496,6 +541,7 @@
         function showSummary() {
             document.getElementById('quiz-container').classList.add('hidden');
             document.getElementById('summary-screen').classList.remove('hidden');
+            document.getElementById('summary-student-name').innerText = `Student: ${studentName}`;
             document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
             const pct = Math.round((score / questions.length) * 100);
             document.getElementById('final-percentage').innerText = `${pct}% Mastery`;
@@ -515,8 +561,6 @@
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
         }
-
-        window.onload = loadQuestion;
     </script>
 </body>
 </html>
